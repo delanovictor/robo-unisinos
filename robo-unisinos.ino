@@ -1,3 +1,4 @@
+// Ponte H
 #define output1 2
 #define output2 3
 
@@ -7,10 +8,10 @@
 #define enableA 9
 #define enableB 10
 
-//int analogPin = 3;\\1
-int val = 1000;
+#define potenciometro A0
 
 void setup() {
+
   pinMode(enableA, OUTPUT);
   pinMode(output1, OUTPUT);
   pinMode(output2, OUTPUT);
@@ -22,25 +23,26 @@ void setup() {
 }
 
 void loop() {
-  analogWrite(enableA, val / 4);
-  analogWrite(enableB, val / 4);
-
-  andarPraFrente();
+  calcularVelocidade();
   
+  andarPraFrente();
   delay(2000);
-
   parar();
-
   delay(500);
+  
+  calcularVelocidade();
   
   andarPraTras();
-  
   delay(2000);
-
   parar();
-
   delay(500);
+}
+
+void calcularVelocidade(){
+  int val = analogRead(potenciometro);  
   
+  analogWrite(enableA, val / 4);
+  analogWrite(enableB, val / 4);
 }
 
 void andarPraFrente() {
@@ -52,7 +54,6 @@ void andarPraFrente() {
 }
 
 void andarPraTras() {
-
   digitalWrite(output1, LOW);
   digitalWrite(output2, HIGH);
 
@@ -60,10 +61,7 @@ void andarPraTras() {
   digitalWrite(output4, HIGH);
 }
 
-
-
 void parar() {
-
   digitalWrite(output1, LOW);
   digitalWrite(output2, LOW);
 
