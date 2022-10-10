@@ -1,56 +1,55 @@
-#define rodaEsquerda1 8
-#define rodaEsquerda2 7
+#define rodaEsquerda1 7 //out1 e out2 e laranja
+#define rodaEsquerda2 6
 
-#define rodaDireita1 6
+#define rodaDireita1 4 //out3 e out4 e roxo
 #define rodaDireita2 5
-
-#define motorEsquerdo 9
-#define motorDireito 4
 
 #define potenciometro A0
 
-void setup() {
+int sensorDireito  = 2;
+int sensorEsquerdo = 3;
 
-  pinMode(motorEsquerdo, OUTPUT);
+void setup() {
+  Serial.begin(9600);
   pinMode(rodaEsquerda1, OUTPUT);
   pinMode(rodaEsquerda2, OUTPUT);
 
-  pinMode(motorDireito, OUTPUT);
   pinMode(rodaDireita1, OUTPUT);
   pinMode(rodaDireita2, OUTPUT);
 
-  calcularVelocidade();
+  pinMode(sensorDireito,  INPUT);
+  pinMode(sensorEsquerdo, INPUT);
 }
 
 void loop() {
-  andarPraFrente();
-  delay(2000);
-  parar();
-  delay(500);
+  int valorSensorDireito  = digitalRead(sensorDireito);
+  int valorSensorEsquerdo = digitalRead(sensorEsquerdo);
   
-  andarPraTras();
-  delay(2000);
-  parar();
-  delay(500);
+  if((valorSensorDireito == 0) && (valorSensorEsquerdo == 0)) {
+    andarPraFrente();
+  }else if((valorSensorDireito == 1) && (valorSensorEsquerdo == 1)){
+    parar();
+  }
+   
+ // andarPraFrente();
+ // delay(2000);
+ // parar();
+ // delay(500);
   
-  girarDireita();
-  delay(2000);
-  parar();
-  delay(500);
-
-  girarEsquerda();
-  delay(2000);
-  parar();
-  delay(500);
-}
-
-void calcularVelocidade(){
-//  int val = analogRead(potenciometro);  
-
-  int val = 1024;
+ // andarPraTras();
+ // delay(2000);
+ // parar();
+ // delay(500);
   
-  analogWrite(motorEsquerdo, val / 4);
-  analogWrite(motorDireito, val / 4);
+ // girarDireita();
+ // delay(2000);
+ // parar();
+ // delay(500);
+
+ // girarEsquerda();
+ // delay(2000);
+ // parar();
+ // delay(500);
 }
 
 void andarPraFrente() {
