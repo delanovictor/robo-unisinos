@@ -8,19 +8,22 @@
 
 #define isolante 1
 #define chao     0
-#define sensorContador 8
 
 #define ledContador 13
 
-int sensorDireito  = 2;
-int sensorEsquerdo = 3;
-int contador       = 0;
+#define sensorDireito  8
+#define sensorEsquerdo 3
 
+#define sensorContador 2
+
+
+int contador = 0;
+int isBuraco = 0;
 int valorSensorDireito;
 int valorSensorEsquerdo;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   pinMode(rodaEsquerda1, OUTPUT);
   pinMode(rodaEsquerda2, OUTPUT);
 
@@ -32,7 +35,9 @@ void setup() {
 
   pinMode(ledContador, OUTPUT);
 
-  pinMode(sensorContado, INPUT);
+  pinMode(sensorContador, INPUT);
+
+  //attachInterrupt(digitalPinToInterrupt(sensorContador), checkLinha, RISING);
 }
 
 void loop() {
@@ -40,6 +45,12 @@ void loop() {
   valorSensorEsquerdo = digitalRead(sensorEsquerdo);
   
   seguirCaminho();
+  Serial.print("Contador: ");
+  Serial.println(contador);
+
+  Serial.print("Pino: ");
+  Serial.println(digitalRead(sensorContador));
+
 }
 
 void andarPraFrente() {
@@ -108,13 +119,13 @@ void corrigirParaEsquerda() {
   digitalWrite(rodaEsquerda2, LOW);
 }
 
-void checkLinha( ) {
-  int passouLinha = digitalRead(sensorContador);
-  
+void checkLinha() {
+  if(digitalRead(sensorContador) == isolante && isBuraco == 0){
+    isBuraco = 1;
     contador++;
-    digitalWrite(ledContador, HIGH);
-    delay(1000);
-    digitalWrite(ledContador, LOW);   
+  }else if(digitalRead(sensorContador) == chao && isBuraco == 1){
+      isBuraco = 0;
+  }
 }
     
 void seguirCaminho() {
@@ -122,28 +133,30 @@ void seguirCaminho() {
   if((contador == 0) || (contador == 1) || (contador == 2)){
     andarLinhaReta(); 
   }else {
-    parar();
+    girarEsquerda();
   }
 }
 
+
+
 void teste() {
      
-//  andarPraFrente();
-//  delay(2000);
-//  parar();
-//  delay(500);
+  andarPraFrente();
+  delay(2000);
+  parar();
+  delay(500);
   
-//  andarPraTras();
-//  delay(2000);
-//  parar();
-//  delay(500);
+  andarPraTras();
+  delay(2000);
+  parar();
+ delay(500);
   
- // girarDireita();
-//  delay(2000);
-//  parar();
-//  delay(500);
+ girarDireita();
+  delay(2000);
+  parar();
+  delay(500);
 
-//  girarEsquerda();
+  girarEsquerda();
 //  delay(2000);
 //  parar();
 //  delay(500);
