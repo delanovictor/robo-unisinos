@@ -9,18 +9,26 @@
 #define isolante 1
 #define chao     0
 
+#define obstaculo 0
+#define livre     1
+
 #define ledContador 13
 
-#define sensorDireito  8
-#define sensorEsquerdo 3
+#define sensorDireito  3
+#define sensorEsquerdo 2
+#define sensorParada   9
 
-#define sensorContador 2
+#define sensorContador 8
 
-
-int contador = 0;
-int isBuraco = 0;
+int contadorLinha          = 0;
+int isBuraco               = 0;
+int contadorSensorDireito  = 0;
+int contadorSensorEsquerdo = 0;
+int isBuracoDireito        = 0;
+int isBuracoEsquerdo       = 0;
 int valorSensorDireito;
 int valorSensorEsquerdo;
+int valorSensorParada;
 
 void setup() {
   Serial.begin(115200);
@@ -36,20 +44,23 @@ void setup() {
   pinMode(ledContador, OUTPUT);
 
   pinMode(sensorContador, INPUT);
-
-  //attachInterrupt(digitalPinToInterrupt(sensorContador), checkLinha, RISING);
 }
 
 void loop() {
   valorSensorDireito  = digitalRead(sensorDireito);
   valorSensorEsquerdo = digitalRead(sensorEsquerdo);
+  valorSensorParada   = digitalRead(sensorParada);
   
   seguirCaminho();
-  Serial.print("Contador: ");
-  Serial.println(contador);
 
-  Serial.print("Pino: ");
-  Serial.println(digitalRead(sensorContador));
+  // Serial.print("Parar: ");
+ //  Serial.println(valorSensorParada);
+  
+ // Serial.print("Contador: ");
+ // Serial.println(contador);
+
+//  Serial.print("Pino: ");
+//  Serial.println(digitalRead(sensorContador));
 
 }
 
@@ -122,18 +133,46 @@ void corrigirParaEsquerda() {
 void checkLinha() {
   if(digitalRead(sensorContador) == isolante && isBuraco == 0){
     isBuraco = 1;
-    contador++;
+    contadorLinha++;
   }else if(digitalRead(sensorContador) == chao && isBuraco == 1){
       isBuraco = 0;
   }
 }
     
 void seguirCaminho() {
+  if(valorSensorParada == obstaculo){
+    parar();
+    return;
+  }
   checkLinha();
-  if((contador == 0) || (contador == 1) || (contador == 2)){
+  if((contadorLinha == 0) || (contadorLinha == 1) || (contadorLinha == 2)){
     andarLinhaReta(); 
   }else {
+    //girarEsquerda();
+   // parar();
+    dobrarEsquerda();
+  }
+}
+
+void dobrarEsquerda() {
+  if(contadorSensorDireito == 0 && contadorSensorEsquerdo == 0){
     girarEsquerda();
+    if(valorSensorDireito == isolante && isBuracoDireito == 0){
+      isBuracoDireito = 1;
+    }else if(valorSensorDireito == chao && isBuracoDireito == 1){
+      contadorSensorDireito ++;
+    }
+  }else if(contadorSensorDireito == 1 && contadorSensorEsquerdo == 0){
+    girarEsquerda();
+    if(valorSensorEsquerdo == isolante && isBuracoEsquerdo == 0){
+      isBuracoEsquerdo = 1;
+    }else if(valorSensorEsquerdo == chao && isBuracoEsquerdo == 1){
+      contadorSensorEsquerdo ++;
+    }
+  }else {
+    contadorSensorDireito  = 0;
+    contadorSensorEsquerdo = 0;
+    contadorLinha          = 0;
   }
 }
 
@@ -141,22 +180,22 @@ void seguirCaminho() {
 
 void teste() {
      
-  andarPraFrente();
-  delay(2000);
-  parar();
-  delay(500);
+ // andarPraFrente();
+ // delay(2000);
+ // parar();
+ // delay(500);
   
-  andarPraTras();
-  delay(2000);
-  parar();
- delay(500);
+ // andarPraTras();
+ // delay(2000);
+ // parar();
+ //delay(500);
   
- girarDireita();
-  delay(2000);
-  parar();
-  delay(500);
+// girarDireita();
+ // delay(2000);
+ // parar();
+ // delay(500);
 
-  girarEsquerda();
+ // girarEsquerda();
 //  delay(2000);
 //  parar();
 //  delay(500);
